@@ -1,11 +1,10 @@
 // src/App.js
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { initializeApp } from 'firebase/app';
 import { getAuth, onAuthStateChanged, signInWithEmailAndPassword, signOut } from 'firebase/auth';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-
 // Components
 import Header from './components/Header';
 import Home from './pages/Home';
@@ -57,24 +56,76 @@ function App() {
   };
 
   if (loading) {
-    return <div className="loading">Loading...</div>;
+    return document.createElement('div', { 
+      className: 'loading',
+      textContent: 'Loading...'
+    });
   }
 
-  return (
-    <Router>
-      <div className="app">
-        <Header user={user} onLogout={handleLogout} />
-        <ToastContainer position="top-right" autoClose={5000} />
-        <Routes>
-          <Route path="/" element={<Home />} />
-          <Route path="/login" element={user ? <Navigate to="/dashboard" /> : <Login onLogin={handleLogin} />} />
-          <Route path="/dashboard" element={user ? <Dashboard user={user} /> : <Navigate to="/login" />} />
-          <Route path="/plan-trip" element={user ? <TripPlanner user={user} /> : <Navigate to="/login" />} />
-          <Route path="/profile" element={user ? <Profile user={user} /> : <Navigate to="/login" />} />
-        </Routes>
-      </div>
-    </Router>
-  );
+  const appDiv = document.createElement('div');
+  appDiv.className = 'app';
+
+  const renderApp = () => {
+    return createElement(Router, {}, 
+      createElement('div', { className: 'app' },
+        createElement(Header, { user: user, onLogout: handleLogout }),
+        createElement(ToastContainer, { position: 'top-right', autoClose: 5000 }),
+        createElement(Routes, {},
+          createElement(Route, { path: '/', element: createElement(Home) }),
+          createElement(Route, { 
+            path: '/login', 
+            element: user ? createElement(Navigate, { to: '/dashboard' }) : createElement(Login, { onLogin: handleLogin }) 
+          }),
+          createElement(Route, { 
+            path: '/dashboard', 
+            element: user ? createElement(Dashboard, { user }) : createElement(Navigate, { to: '/login' }) 
+          }),
+          createElement(Route, { 
+            path: '/plan-trip', 
+            element: user ? createElement(TripPlanner, { user }) : createElement(Navigate, { to: '/login' }) 
+          }),
+          createElement(Route, { 
+            path: '/profile', 
+            element: user ? createElement(Profile, { user }) : createElement(Navigate, { to: '/login' }) 
+          })
+        )
+      )
+    );
+  };
+
+  return renderApp();
+}
+
+// Helper function to create elements
+function createElement(component, props = {}, ...children) {
+  if (typeof component === 'string') {
+    const element = document.createElement(component);
+    
+    for (const key in props) {
+      if (key === 'className') {
+        element.className = props[key];
+      } else if (key === 'textContent') {
+        element.textContent = props[key];
+      } else {
+        element.setAttribute(key, props[key]);
+      }
+    }
+    
+    children.forEach(child => {
+      if (child) {
+        if (typeof child === 'string') {
+          element.appendChild(document.createTextNode(child));
+        } else {
+          element.appendChild(child);
+        }
+      }
+    });
+    
+    return element;
+  } else {
+    // For React components and React Router components
+    return component({ ...props, children: children.length ? children : undefined });
+  }
 }
 
 export default App;
