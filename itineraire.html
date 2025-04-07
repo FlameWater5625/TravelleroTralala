@@ -1,0 +1,17 @@
+<div id="results">
+  <h2>Itinéraire recommandé</h2>
+  <ul id="itineraire-list"></ul>
+</div>
+
+<script>
+fetch('/api/itineraire.php?user_id=...')
+  .then(res => res.json())
+  .then(data => {
+    const list = document.getElementById('itineraire-list');
+    data.itineraire.forEach(item => {
+      const li = document.createElement('li');
+      li.textContent = item;
+      list.appendChild(li);
+    });
+  });
+</script>
