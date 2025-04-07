@@ -1,0 +1,9 @@
+<?php
+// historique.php
+$user_id = $_SESSION['user_id'];
+$result = $db->query("SELECT * FROM voyages WHERE user_id = $user_id");
+
+while ($row = $result->fetch_assoc()) {
+  echo "<div>{$row['destination']} - {$row['date']}</div>";
+}
+?>
