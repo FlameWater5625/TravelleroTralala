@@ -1,0 +1,16 @@
+<form id="tripForm">
+  <label>Budget (€)</label>
+  <input type="number" name="budget" required>
+
+  <label>Destination</label>
+  <input type="text" name="destination" required>
+
+  <label>Préférences</label>
+  <select name="activites[]" multiple>
+    <option value="plage">Plage</option>
+    <option value="randonnée">Randonnée</option>
+    <option value="culture">Culture</option>
+  </select>
+
+  <button type="submit">Générer Itinéraire</button>
+</form>
